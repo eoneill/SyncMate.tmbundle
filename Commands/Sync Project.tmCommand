@@ -24,6 +24,8 @@ SyncMate.sync(:project)
 	<string>html</string>
 	<key>outputLocation</key>
 	<string>newWindow</string>
+	<key>scope</key>
+	<string>source.*, source, text.*, text</string>
 	<key>uuid</key>
 	<string>409849BD-D897-4136-BA9E-DEE8ECE06EBA</string>
 	<key>version</key>
