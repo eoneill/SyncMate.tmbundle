@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>contactEmailRot13</key>
+	<string></string>
+	<key>contactName</key>
+	<string>Eugene ONeill</string>
+	<key>description</key>
+	<string>Easily keep file changes synchronized with a remote destination.</string>
+	<key>name</key>
+	<string>SyncMate</string>
+	<key>uuid</key>
+	<string>A282F107-3545-48E1-973A-F48F9B787342</string>
+</dict>
+</plist>
