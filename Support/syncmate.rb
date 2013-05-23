@@ -85,7 +85,7 @@ private
       cmds.push "scp -P \"#{ENV['TM_SYNCMATE_REMOTE_PORT']}\" \"#{ENV['TM_FILEPATH']}\" \"#{ENV['TM_SYNCMATE_REMOTE_USER']}@#{ENV['TM_SYNCMATE_REMOTE_HOST']}:'#{@destination}'\" 2>&1"
     when :rsync
       rsync = "rsync -v -zar #{ENV['TM_SYNCMATE_RSYNC_OPTIONS']} -e "
-      rsync << "\"ssh -p #{ENV['TM_SYNCMATE_REMOTE_PORT']}\" . \"#{ENV['TM_SYNCMATE_REMOTE_USER']}@#{ENV['TM_SYNCMATE_REMOTE_HOST']}:'#{ENV['TM_SYNCMATE_REMOTE_PATH']}'\" 2>&1 "
+      rsync << "\"ssh -p #{ENV['TM_SYNCMATE_REMOTE_PORT']}\" \"#{ENV['TM_PROJECT_DIRECTORY']}/\" \"#{ENV['TM_SYNCMATE_REMOTE_USER']}@#{ENV['TM_SYNCMATE_REMOTE_HOST']}:'#{ENV['TM_SYNCMATE_REMOTE_PATH']}/'\" 2>&1 "
       rsync << "| grep -v 'bind: Address already in use' | grep -v 'channel_setup_fwd_listener: cannot listen to port:' | grep -v 'Could not request local forwarding.'"
       cmds.push(rsync)
     end
