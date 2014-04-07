@@ -57,24 +57,31 @@ private
   def self.sync_file
     puts "syncing... #{@relative_file} to #{ENV['TM_SYNCMATE_REMOTE_HOST']}"
     # execute the sync command and throw an exception if there are errors
-    throw_exception %x(#{commands(:scp)})
+    throw_exception %x(#{commands(:rsync)})
     puts "synced to: #{@destination}"
   end
 
   def self.sync_project
     puts "syncing... #{ENV['TM_PROJECT_DIRECTORY']}/* to #{ENV['TM_SYNCMATE_REMOTE_HOST']}"
     puts "<pre>"
-    puts %x(#{commands(:rsync)})
+    puts %x(#{commands(:rsync_project)})
     puts "</pre>"
     puts "synced to: #{@destination}"
   end
 
-  def self.commands(type = :scp)
+  def self.commands(type = :rsync)
     cmds = []
 
     # if a local user is set, piggy back on their SSH_AUTH_SOCK
     if not type == :post and not ENV['TM_SYNCMATE_LOCAL_USER'] =~ FALSE_RX
       cmds.push "export SSH_AUTH_SOCK=$(find /tmp/launch-*/Listeners -user \"#{ENV['TM_SYNCMATE_LOCAL_USER']}\" -type s | head -1 )"
+    end
+
+    if type == :rsync_project
+      source = File.join(ENV['TM_PROJECT_DIRECTORY'], '')
+      destination = ENV['TM_SYNCMATE_REMOTE_PATH']
+      filter = "grep -v 'bind: Address already in use' | grep -v 'channel_setup_fwd_listener: cannot listen to port:' | grep -v 'Could not request local forwarding.'"
+      type = :rsync
     end
 
     case type
@@ -85,8 +92,8 @@ private
       cmds.push "scp -P \"#{ENV['TM_SYNCMATE_REMOTE_PORT']}\" \"#{ENV['TM_FILEPATH']}\" \"#{ENV['TM_SYNCMATE_REMOTE_USER']}@#{ENV['TM_SYNCMATE_REMOTE_HOST']}:'#{@destination}'\" 2>&1"
     when :rsync
       rsync = "rsync -v -zar #{ENV['TM_SYNCMATE_RSYNC_OPTIONS']} -e "
-      rsync << "\"ssh -p #{ENV['TM_SYNCMATE_REMOTE_PORT']}\" \"#{ENV['TM_PROJECT_DIRECTORY']}/\" \"#{ENV['TM_SYNCMATE_REMOTE_USER']}@#{ENV['TM_SYNCMATE_REMOTE_HOST']}:'#{ENV['TM_SYNCMATE_REMOTE_PATH']}/'\" 2>&1 "
-      rsync << "| grep -v 'bind: Address already in use' | grep -v 'channel_setup_fwd_listener: cannot listen to port:' | grep -v 'Could not request local forwarding.'"
+      rsync << "\"ssh -p #{ENV['TM_SYNCMATE_REMOTE_PORT']}\" \"#{source||ENV['TM_FILEPATH']}\" \"#{ENV['TM_SYNCMATE_REMOTE_USER']}@#{ENV['TM_SYNCMATE_REMOTE_HOST']}:'#{File.dirname(destination || @destination)}/'\" 2>&1 "
+      rsync << "| #{filter || 'grep failed'}"
       cmds.push(rsync)
     end
 
