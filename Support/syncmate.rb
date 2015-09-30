@@ -74,7 +74,7 @@ private
 
     # if a local user is set, piggy back on their SSH_AUTH_SOCK
     if not type == :post and not ENV['TM_SYNCMATE_LOCAL_USER'] =~ FALSE_RX
-      cmds.push "export SSH_AUTH_SOCK=$(find /tmp/launch-*/Listeners -user \"#{ENV['TM_SYNCMATE_LOCAL_USER']}\" -type s | head -1 )"
+      cmds.push "export SSH_AUTH_SOCK=$(find /tmp/*launch*/Listeners -user \"#{ENV['TM_SYNCMATE_LOCAL_USER']}\" -type s | head -1 )"
     end
 
     if type == :rsync_project
